@@ -1,0 +1,16 @@
+{
+  "name": "cdt-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Workers 阿里云多账号 ECS 控制台（状态查询 / 开机 / 强制关机节省停机模式 / CDT 流量）",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:remote": "wrangler dev --remote",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

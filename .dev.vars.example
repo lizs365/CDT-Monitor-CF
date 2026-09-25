@@ -1,0 +1,12 @@
+# 本地开发用：复制为 .dev.vars 后填入真实值（.dev.vars 已被 .gitignore 忽略）
+#
+# 多组配置使用英文分号 ; 分隔，各变量的参数按顺序一一对应。
+# REGION_ID 可省略或留空，留空时默认 cn-hangzhou。
+
+ALIBABA_CLOUD_ACCESS_KEY_ID=LTAI5tAccountA0;LTAI5tAccountB0;LTAI5tAccountC0
+ALIBABA_CLOUD_ACCESS_KEY_SECRET=secretAccountA;secretAccountB;secretAccountC
+INSTANCE_ID=i-aaaaaaa1;i-bbbbbbb2;i-ccccccc3
+REGION_ID=cn-hangzhou;cn-shenzhen;cn-beijing
+
+# 访问密码，未配置时一律拒绝访问
+PASSWORD=change-me

@@ -1,0 +1,27 @@
+name = "cdt-worker"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+# ---------------------------------------------------------------------------
+# 多组 ECS 配置说明
+#   多个账号/实例使用英文分号 ; 分隔，各变量中的参数按顺序一一对应。
+#   REGION_ID 可省略或留空（默认 cn-hangzhou）。
+#
+#   ALIBABA_CLOUD_ACCESS_KEY_ID     = "LTAI5tAAA;LTAI5tBBB;LTAI5tCCC"
+#   ALIBABA_CLOUD_ACCESS_KEY_SECRET = "secretAAA;secretBBB;secretCCC"
+#   INSTANCE_ID                     = "i-aaa;i-bbb;i-ccc"
+#   REGION_ID                       = "cn-hangzhou;cn-shenzhen;cn-beijing"
+#   PASSWORD                        = "your-password"
+#
+# AccessKey / PASSWORD 属于敏感信息，请使用 secret 写入，不要写在 [vars] 中：
+#   wrangler secret put ALIBABA_CLOUD_ACCESS_KEY_ID
+#   wrangler secret put ALIBABA_CLOUD_ACCESS_KEY_SECRET
+#   wrangler secret put INSTANCE_ID
+#   wrangler secret put REGION_ID
+#   wrangler secret put PASSWORD
+# ---------------------------------------------------------------------------
+
+[vars]
+# 非敏感变量可写在此处，例如：
+# REGION_ID = "cn-hangzhou;cn-shenzhen;cn-beijing"
