@@ -4,7 +4,7 @@
  */
 
 const PAGE_STYLE = `
-:root{--bg:#f4f7f9;--panel:#ffffff;--panel-soft:#fafafa;--text:#1f2329;--muted:#8c8c8c;--border:#e8ebef;--primary:#1890ff;--success:#52c41a;--danger:#ff4d4f;--shadow:0 8px 24px rgba(0,0,0,.06);--radius:12px}
+:root{--bg:#f4f7f9;--panel:#ffffff;--panel-soft:#fafafa;--text:#1f2329;--muted:#8c8c8c;--border:#e8ebef;--primary:#1890ff;--success:#52c41a;--warning:#faad14;--danger:#ff4d4f;--shadow:0 8px 24px rgba(0,0,0,.06);--radius:12px}
 @media (prefers-color-scheme:dark){:root{--bg:#14171a;--panel:#1d2126;--panel-soft:#23282e;--text:#e6e8eb;--muted:#8b949e;--border:#30363d;--shadow:0 8px 24px rgba(0,0,0,.4)}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
@@ -45,6 +45,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .meta dd{margin:0;font-weight:600;text-align:right;word-break:break-all}
 .meta dd.traffic{color:var(--primary)}
 .meta dd.traffic-error{color:var(--danger)}
+.meta dd.traffic-low{color:var(--success)}
+.meta dd.traffic-mid{color:var(--warning)}
+.meta dd.traffic-high{color:var(--danger)}
+.meta .progress{display:block}
+.track{height:8px;border-radius:999px;background:var(--border);overflow:hidden}
+.track .fill{display:block;height:100%;border-radius:999px;transition:width .3s ease}
+.track .fill.low{background:var(--success)}
+.track .fill.mid{background:var(--warning)}
+.track .fill.high{background:var(--danger)}
 .actions{display:flex;gap:10px;margin-top:auto}
 .actions .btn{flex:1}
 .card-msg{min-height:18px;font-size:12px;color:var(--muted);text-align:center;line-height:1.5}
@@ -108,6 +117,23 @@ window.__INITIAL__ = ${initialState};
     });
   }
 
+  var TRAFFIC_QUOTA_GB = 200;
+
+  // 流量色阶：< 100GB 绿，100~140GB 黄，> 140GB 红；流量未知时返回空串
+  function trafficLevel(gb) {
+    if (gb === null || gb === undefined) return '';
+    if (gb > 140) return 'high';
+    if (gb >= 100) return 'mid';
+    return 'low';
+  }
+
+  // 进度条占比（总长 200GB，超过 200GB 截断为 100%）
+  function trafficPercent(gb) {
+    if (gb === null || gb === undefined) return 0;
+    var percent = (gb / TRAFFIC_QUOTA_GB) * 100;
+    return Math.round(Math.min(Math.max(percent, 0), 100) * 100) / 100;
+  }
+
   function findItem(index) {
     var list = state.instances || [];
     for (var i = 0; i < list.length; i += 1) {
@@ -132,7 +158,11 @@ window.__INITIAL__ = ${initialState};
     parts.push('<dl class="meta">');
     parts.push('<div class="row"><dt>规格</dt><dd>' + esc(item.specText) + '</dd></div>');
     parts.push('<div class="row"><dt>公网 IP</dt><dd>' + esc(item.publicIp || '无') + '</dd></div>');
-    parts.push('<div class="row"><dt>CDT 流量</dt><dd class="' + (item.trafficGB === null || item.trafficGB === undefined ? 'traffic-error' : 'traffic') + '" title="' + esc(item.trafficError || '') + '">' + esc(item.trafficText) + '</dd></div>');
+    var level = trafficLevel(item.trafficGB);
+    var percent = trafficPercent(item.trafficGB);
+    var quotaTip = level ? '已用 ' + item.trafficText + ' / ' + TRAFFIC_QUOTA_GB + ' GB' : 'CDT 流量不可用';
+    parts.push('<div class="row"><dt>CDT 流量</dt><dd class="' + (level ? 'traffic traffic-' + level : 'traffic-error') + '" title="' + esc(item.trafficError || '') + '">' + esc(item.trafficText) + '</dd></div>');
+    parts.push('<div class="row progress"><div class="track" title="' + esc(quotaTip) + '"><span class="fill ' + (level || 'low') + '" style="width:' + percent + '%"></span></div></div>');
     parts.push('</dl>');
     parts.push('<div class="actions">');
     parts.push('<button type="button" class="btn btn-start" data-action="start" data-index="' + item.index + '"' + (item.canStart ? '' : ' disabled') + '>开机</button>');
